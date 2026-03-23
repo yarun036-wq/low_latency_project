@@ -41,6 +41,38 @@ In a trading system, correctness is only part of the problem. The hot path must 
 - `tests/order_book_tests.cpp`
   Correctness checks against a simple reference model
 
+### Architecture
+
+```text
+Client Orders / Test Flow
+           |
+           v
+   +-------------------+
+   |   OrderBook API   |
+   +-------------------+
+           |
+           v
+   +-------------------+
+   | Matching Engine   |
+   | price-time logic  |
+   +-------------------+
+      |            |
+      |            +--------------------+
+      v                                 v
++-------------+                 +----------------+
+| Trade Events |                 | Top of Book    |
+| Exec Report  |                 | Book State     |
++-------------+                 +----------------+
+      |
+      +--------------------+
+                           |
+                           v
+                 +--------------------+
+                 | Bench / Tests /    |
+                 | TCP Gateway        |
+                 +--------------------+
+```
+
 ### Data Structure Choices
 
 - Preallocated order pool to reduce heap activity on the hot path
