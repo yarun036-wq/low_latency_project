@@ -1,120 +1,77 @@
-# Job Application Agent MVP
+# Low-Latency Limit Order Book
 
-This project is a supervised job-application agent. It scores jobs against your resume/profile, explains whether a role is compatible, drafts tailored application material with OpenAI, and can fill a web application form with Playwright. It does not submit unless you explicitly approve it in the terminal.
+This project is a compact C++20 limit order book and matching engine intended as a low-latency portfolio piece.
 
-## What it does
+## Design
 
-- Reads your profile from `data/profile.json`
-- Reads candidate jobs from `data/jobs.json`
-- Ingests normalized jobs from `data/job-feed.json`
-- Produces a resume compatibility score for each job
-- Explains missing skills, strengths, and risks
-- Generates a tailored application draft with OpenAI when `OPENAI_API_KEY` is set
-- Fills a web form from a selector config in `data/form-config.sample.json`
-- Requires a manual approval before any submit action
-- Stores jobs and application queue state in `storage/db.json`
+- Preallocated order pool sized at startup
+- Intrusive FIFO queues per price level
+- O(1) cancel by `order_id`
+- Price-time priority matching
+- No heap allocation on the hot path once the book and scratch buffers are initialized
 
-## Safety model
+## Layout
 
-- Submission is blocked by default until you answer `yes` in the CLI
-- Browser automation runs only on the URL you provide
-- The script is intended for your own applications and data only
-- Review the generated answers before approving submission
+- `include/lob/order_book.hpp`: public API and core data structures
+- `include/lob/latency_histogram.hpp`: log-bucket latency histogram for p50/p99/p999 reporting
+- `src/order_book.cpp`: matching engine implementation
+- `src/main.cpp`: deterministic demo plus synthetic benchmark harness
+- `src/gateway.cpp`: minimal TCP command gateway around the engine
+- `tests/order_book_tests.cpp`: reference-model parity checks and order-type scenarios
 
-## Setup
-
-1. Copy `.env.example` to `.env`
-2. Set `OPENAI_API_KEY`
-3. Install dependencies:
+## Build
 
 ```bash
-npm install
+cmake -S . -B build
+cmake --build build --config Release
 ```
 
-4. Build:
+Run:
 
 ```bash
-npm run build
+./build/order_book_bench
+./build/order_book_bench 1000000
+./build/order_book_tests
+./build/order_book_gateway 9090
 ```
 
-5. Run:
+On Windows with Visual Studio generators, the executable is typically under `build/Release/order_book_bench.exe`.
 
-```bash
-npm start -- --profile data/profile.json --jobs data/jobs.json
+## Supported Order Semantics
+
+- `Limit` and `Market`
+- `GTC`, `IOC`, and `FOK`
+- Price-time priority for resting orders
+- Market and IOC/FOK remainders do not rest on the book
+
+## Gateway Protocol
+
+Connect over TCP and send one command per line:
+
+```text
+BUY 101 100500 25 LIMIT GTC
+SELL 102 100450 10 LIMIT IOC
+CANCEL 101
+TOP
+STATS
+QUIT
 ```
 
-## Web dashboard
+Response lines are plain text so you can test quickly with `nc`/`telnet` or a custom client.
 
-Start the local dashboard:
+## Benchmark Output
 
-```bash
-npm run start:web
-```
+The benchmark now reports:
 
-Then open `http://localhost:3000` in your browser.
+- average ns/op
+- p50 latency
+- p99 latency
+- p999 latency
+- aggregate submitted/cancelled/traded counters
 
-The dashboard shows:
+## What To Improve Next
 
-- your current profile summary
-- jobs ranked by resume compatibility
-- an application queue with statuses like `queued`, `draft_ready`, `approved`, and `submitted`
-- missing and matched skills
-- the generated draft for the selected role
-
-## Easy Apply style pipeline
-
-The web UI now supports:
-
-- `Ingest Jobs`: seed and normalize jobs into local storage
-- `Sync Sources`: pull jobs from configured adapters in `data/sources.json`
-- `Build Queue`: create application records based on resume compatibility
-- `Generate Draft`: prepare the tailored application content for a queue item
-- `Approve`: move an application into approved state
-- `Submit`: submit an approved application
-
-Application types:
-
-- `easy_apply`: local submission flow without a browser form dependency
-- `external_form`: uses a Playwright form config when available
-- `manual_only`: kept visible but not auto-submitted
-
-## Source adapters
-
-Configured in `data/sources.json`:
-
-- `greenhouse`: syncs from `https://boards-api.greenhouse.io/v1/boards/<board>/jobs?content=true`
-- `lever`: syncs from `https://api.lever.co/v0/postings/<site>?mode=json`
-- `workday`: syncs from a custom JSON feed URL you provide
-- `linkedin_manual`: imports from a local JSON file instead of scraping LinkedIn directly
-
-This keeps the pipeline stable while avoiding brittle login scraping as the default path.
-
-## LinkedIn manual review
-
-There is now a LinkedIn-specific manual review API path for Easy Apply style jobs.
-
-- It opens LinkedIn in a persistent Playwright browser profile stored under `storage/linkedin-profile`
-- It can reuse your LinkedIn login across sessions
-- It attempts to open the Easy Apply modal and prefill basic fields like phone and email
-- It stops before final submission so you can review and click yourself
-
-## Optional form automation
-
-To fill a specific application page:
-
-```bash
-npm start -- --profile data/profile.json --jobs data/jobs.json --job-id job-001 --apply --form-config data/form-config.sample.json
-```
-
-The terminal will show the compatibility result first, then ask for approval before the browser is allowed to submit.
-
-## Data files
-
-- `data/profile.json`: your resume profile, skills, constraints, and raw resume text
-- `data/jobs.json`: jobs to evaluate
-- `data/form-config.sample.json`: a sample selector map for browser automation
-
-## Notes
-
-- This is an MVP. Real job boards often have anti-bot controls, CAPTCHAs, and terms that may limit automation.
-- The quality of matching and drafting depends heavily on the completeness of your profile data.
+- Split hot and cold fields in the order node
+- Add replay input from captured market/order streams
+- Replace the reference test model with randomized long-run fuzzing
+- Move gateway parsing to a fixed-buffer parser to reduce allocations
