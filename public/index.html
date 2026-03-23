@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Agent Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Resume Compatibility Dashboard</p>
+        <h1>Job applications with a clear fit signal before you apply.</h1>
+        <p class="subtitle">
+          Review ranked roles, inspect resume compatibility, and open a tailored draft for any selected job.
+        </p>
+      </section>
+
+      <section class="layout">
+        <aside class="panel profile-panel">
+          <div class="panel-header">
+            <h2>Profile</h2>
+            <div class="header-actions">
+              <button id="ingestButton" class="secondary-button">Ingest Jobs</button>
+              <button id="syncSourcesButton" class="secondary-button">Sync Sources</button>
+              <button id="queueButton" class="secondary-button">Build Queue</button>
+              <button id="autoApplyButton" class="primary-button">Auto Apply</button>
+              <button id="refreshButton" class="secondary-button">Refresh</button>
+            </div>
+          </div>
+          <div id="profileSummary" class="profile-summary"></div>
+        </aside>
+
+        <section class="panel jobs-panel">
+          <div class="panel-header">
+            <h2>Compatible Jobs</h2>
+            <span id="jobCount" class="muted"></span>
+          </div>
+          <div id="jobList" class="job-list"></div>
+        </section>
+
+        <section class="panel queue-panel">
+          <div class="panel-header">
+            <h2>Easy Apply Queue</h2>
+            <span id="queueCount" class="muted"></span>
+          </div>
+          <div id="queueList" class="queue-list"></div>
+        </section>
+
+        <section class="panel draft-panel">
+          <div class="panel-header">
+            <h2>Selected Draft</h2>
+            <span id="draftStatus" class="muted">Choose a job</span>
+          </div>
+          <div id="draftView" class="draft-view empty-state">
+            Select a job to see the compatibility breakdown and tailored application draft.
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

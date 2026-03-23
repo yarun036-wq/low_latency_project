@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Jobs</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page jobs-page">
+      <section class="hero jobs-hero">
+        <p class="eyebrow">Job Board</p>
+        <h1>All synced jobs with direct apply links and automation actions.</h1>
+        <p class="subtitle">
+          Review every job, open the original application page, or trigger the automated draft and submit flow where supported.
+        </p>
+      </section>
+
+      <section class="panel jobs-toolbar">
+        <div class="toolbar-row">
+          <div class="toolbar-group">
+            <label class="toolbar-label" for="searchInput">Search</label>
+            <input id="searchInput" class="toolbar-input" type="text" placeholder="C++, backend, Bengaluru, Greenhouse" />
+          </div>
+          <div class="toolbar-group">
+            <label class="toolbar-label" for="scoreFilter">Min score</label>
+            <select id="scoreFilter" class="toolbar-input">
+              <option value="0">All</option>
+              <option value="45">45+</option>
+              <option value="70">70+</option>
+              <option value="85">85+</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <label class="toolbar-label" for="typeFilter">Type</label>
+            <select id="typeFilter" class="toolbar-input">
+              <option value="all">All</option>
+              <option value="easy_apply">Easy apply</option>
+              <option value="external_form">External form</option>
+              <option value="manual_only">Manual only</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <label class="toolbar-label" for="sourceFilter">Platform</label>
+            <select id="sourceFilter" class="toolbar-input">
+              <option value="all">All</option>
+            </select>
+          </div>
+          <div class="toolbar-actions">
+            <button id="syncJobsButton" class="secondary-button">Sync Sources</button>
+            <button id="rebuildQueueButton" class="secondary-button">Rebuild Queue</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel jobs-table-panel">
+        <div class="panel-header">
+          <h2>Available Jobs</h2>
+          <span id="jobsSummary" class="muted"></span>
+        </div>
+        <div id="jobsGrid" class="jobs-grid"></div>
+      </section>
+
+      <section class="panel draft-panel">
+        <div class="panel-header">
+          <h2>Automation Log</h2>
+          <span id="jobsStatus" class="muted">Ready</span>
+        </div>
+        <div id="jobsDetail" class="draft-view empty-state">
+          Select a job card, open its application link, or run auto-apply on supported flows.
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/jobs.js"></script>
+  </body>
+  </html>

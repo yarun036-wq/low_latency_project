@@ -1,0 +1,54 @@
+#include<iostream>
+#include<bits/stdc++.h>
+using namespace std;
+class MyClass
+{
+    public:
+    int myNum;
+    string myString;
+    MyClass() //everytime constructor whenever new object is created.
+    {
+        cout<<"Hello"<<endl;
+    }
+    MyClass(int x,string y) //parameterized constructor
+    {
+        myNum=x;
+        myString=y;
+    }
+    void myMethod() //Function inside class
+    {
+        cout<<"Hello World"<<endl;
+    }
+    int speed(int maxSpeed); // to use function outside we should declare function inside.
+};
+int MyClass::speed(int maxSpeed) //Function outside class
+{
+    return maxSpeed;
+}
+int main()
+{
+    MyClass myObj;
+    MyClass myObj1;
+    MyClass myObj2;
+    MyClass myObj3;
+    MyClass myObj4;
+    MyClass myObj5;
+    MyClass myObj6;
+    MyClass myObja(1,"ABC");
+    MyClass myObjb(2,"BCD");
+    myObj.myNum=1;
+    myObj.myString="Arun";
+    myObj1.myNum=2;
+    myObj1.myString="Arun2";
+    myObj.myMethod();
+    cout<<myObj.myNum<<endl;
+    cout<<myObj.myString<<endl;
+    cout<<myObj1.myNum<<endl;
+    cout<<myObj1.myString<<endl;
+    myObj.myMethod();
+    cout<<myObj.speed(200)<<endl;
+    cout<<myObja.myNum<<" "<<myObja.myString<<endl;
+    cout<<myObjb.myNum<<" "<<myObjb.myString<<endl;
+    return 0;
+    
+}
