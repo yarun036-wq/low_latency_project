@@ -1,44 +1,6 @@
-# Low-Latency C++ Trading Projects
+# Low-Latency Limit Order Book
 
-This repository contains two compact C++20 low-latency portfolio projects:
-
-- a limit order book and matching engine
-- a crypto multi-exchange arbitrage detector with USD-normalized pricing
-
-## Crypto Arbitrage Detector
-
-This module compares the same crypto asset across exchanges in different countries, converts every venue quote into USD, adjusts for fees/slippage, and finds the best buy venue and best sell venue.
-
-### What It Does
-
-- ingests per-exchange top-of-book quotes
-- converts EUR/JPY/KRW/USDT-style quotes into USD
-- computes effective buy and sell prices after costs
-- finds best cross-exchange arbitrage opportunities
-- reports low-latency benchmark stats for update-and-detect loops
-
-### Crypto Files
-
-- `include/arb/crypto_arb.hpp`: public arbitrage detector API
-- `src/crypto_arb.cpp`: normalization and opportunity engine
-- `src/crypto_arb_main.cpp`: demo plus synthetic benchmark
-- `tests/crypto_arb_tests.cpp`: normalization and opportunity checks
-
-### Run Crypto Module
-
-```bash
-./build/crypto_arb_bench
-./build/crypto_arb_bench 1000000
-./build/crypto_arb_tests
-```
-
-The crypto executable prints opportunities like:
-
-```text
-BTC/USD: buy on Japan venue in USD-normalized terms, sell on US venue, spread after fees = ...
-```
-
-## Limit Order Book
+This project is a compact C++20 limit order book and matching engine intended as a low-latency portfolio piece.
 
 ## Design
 
@@ -71,8 +33,6 @@ Run:
 ./build/order_book_bench 1000000
 ./build/order_book_tests
 ./build/order_book_gateway 9090
-./build/crypto_arb_bench
-./build/crypto_arb_tests
 ```
 
 On Windows with Visual Studio generators, the executable is typically under `build/Release/order_book_bench.exe`.

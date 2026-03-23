@@ -8,7 +8,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(order_book
   src/order_book.cpp
-  src/crypto_arb.cpp
 )
 
 target_include_directories(order_book
@@ -47,22 +46,4 @@ add_executable(order_book_gateway
 target_link_libraries(order_book_gateway PRIVATE order_book)
 if(MSVC)
   target_compile_options(order_book_gateway PRIVATE /EHsc)
-endif()
-
-add_executable(crypto_arb_bench
-  src/crypto_arb_main.cpp
-)
-
-target_link_libraries(crypto_arb_bench PRIVATE order_book)
-if(MSVC)
-  target_compile_options(crypto_arb_bench PRIVATE /EHsc)
-endif()
-
-add_executable(crypto_arb_tests
-  tests/crypto_arb_tests.cpp
-)
-
-target_link_libraries(crypto_arb_tests PRIVATE order_book)
-if(MSVC)
-  target_compile_options(crypto_arb_tests PRIVATE /EHsc)
 endif()
