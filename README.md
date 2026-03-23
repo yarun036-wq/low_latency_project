@@ -130,11 +130,44 @@ The benchmark reports:
 - `p999` latency
 - submitted, cancelled, executed, and trade counters
 
+### Sample Output
+
+```text
+Deterministic demo trades
+  incoming=4 resting=1 px=100100 qty=40
+  incoming=4 resting=2 px=100100 qty=10
+  report accepted=1 executed=50 remaining=0 rested=0
+Top of book
+  Bid: 99900 qty=60 orders=1
+  Ask: 100100 qty=20 orders=1
+
+Benchmark
+  iterations: 10000
+  avg ns/op:  157.91
+  p50 ns:     64
+  p99 ns:     512
+  p999 ns:    4096
+```
+
 ## Interview Summary
 
 Short version:
 
 > Built a low-latency C++ limit order book and matching engine with price-time priority, market/limit order support, cancel handling, correctness tests, and tail-latency benchmarking.
+
+Longer version:
+
+> I built a compact exchange-core style system in C++ that processes buy and sell orders, matches them by price-time priority, supports cancels and richer order semantics, and exposes measurable latency through a benchmark harness. The main engineering focus was on predictable hot-path behavior, memory layout, and correctness under realistic matching scenarios.
+
+## GitHub About Suggestions
+
+Suggested repo description:
+
+> Low-latency C++ limit order book and matching engine with price-time priority, cancel handling, tests, and tail-latency benchmarking.
+
+Suggested tags:
+
+`c-plus-plus`, `low-latency`, `matching-engine`, `limit-order-book`, `trading-systems`, `market-microstructure`, `benchmarking`, `cmake`
 
 ## Next Improvements
 
