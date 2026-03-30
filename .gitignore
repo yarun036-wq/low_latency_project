@@ -18,3 +18,4 @@ c++/
 *.jpg
 *.jpeg
 crypto-arbitrage-detector-export/
+pre-trade-risk-engine-export/
